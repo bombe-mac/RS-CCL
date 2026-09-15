@@ -14,10 +14,10 @@ class MoCo(nn.Module):
         self.T = T
 
         self.encoder_q = base_encoder(name=name, num_classes=dim)
-        self.linear = nn.Linear(feat_dim, num_classes)
+        dim_mlp = self.encoder_q.fc.weight.shape[1]  # backbone's true pre-fc feature width (512 for ResNet18/VGG16, timm's num_features for MobileViT_S)
+        self.linear = nn.Linear(dim_mlp, num_classes)
 
-        if mlp:  
-            dim_mlp = self.encoder_q.fc.weight.shape[1]
+        if mlp:
             self.encoder_q.fc = nn.Sequential(nn.Linear(dim_mlp, dim_mlp), nn.ReLU(inplace=True), nn.Linear(dim_mlp, dim_mlp), nn.ReLU(inplace=True), self.encoder_q.fc)
 
         # create the queue

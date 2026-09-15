@@ -30,8 +30,8 @@ init_config:
   init_gain: 1.0
   gpu_ids: [0]
 ---
-model_config: 
-  name: ResNet18
+model_config:
+  name: MobileViT_S   # valid values: ResNet18, VGG16, MobileViT_S
   inplanes: 64
   num_classes: 21
 

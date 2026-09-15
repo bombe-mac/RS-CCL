@@ -168,4 +168,84 @@ class ResNet18(nn.Module):
         x = self.fc(x)
 
         return x
- 
+
+
+class VGG16(nn.Module):
+    def __init__(self,
+                 name,
+                 inplanes=64,
+                 num_classes=21):
+        super(VGG16, self).__init__()
+        self.name = name
+        self.num_classes = num_classes
+        self.inplanes = inplanes
+        # 64,128,256,512,512 with inplanes=64 -- standard VGG16 channel progression
+        self.planes = [inplanes, inplanes * 2, inplanes * 4, inplanes * 8, inplanes * 8]
+        self.layer_nums = [2, 2, 3, 3, 3]  # 2+2+3+3+3 = 13 conv layers -> "VGG16"
+
+        self.block1 = self.make_block(3, self.planes[0], self.layer_nums[0])
+        self.block2 = self.make_block(self.planes[0], self.planes[1], self.layer_nums[1])
+        self.block3 = self.make_block(self.planes[1], self.planes[2], self.layer_nums[2])
+        self.block4 = self.make_block(self.planes[2], self.planes[3], self.layer_nums[3])
+        self.block5 = self.make_block(self.planes[3], self.planes[4], self.layer_nums[4])
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(self.planes[4], self.num_classes)
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight,
+                                        mode='fan_out',
+                                        nonlinearity='relu')
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+
+    def make_block(self, inplanes, planes, num_convs):
+        layers = []
+        for i in range(num_convs):
+            in_channels = inplanes if i == 0 else planes
+            layers.append(ConvBnActBlock(in_channels, planes, kernel_size=3, stride=1, padding=1,
+                                         groups=1, has_bn=True, has_act=True))
+        layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x = self.block1(x)
+        x = self.block2(x)
+        x = self.block3(x)
+        x = self.block4(x)
+        x = self.block5(x)
+
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+
+        return x
+
+
+class MobileViT_S(nn.Module):
+    def __init__(self,
+                 name,
+                 inplanes=64,
+                 num_classes=21):
+        super(MobileViT_S, self).__init__()
+        self.name = name
+        self.num_classes = num_classes
+        # inplanes is intentionally unused: timm's mobilevit_s has its own fixed channel
+        # schedule (final width 640). Accepted only so the constructor signature matches
+        # ResNet18/VGG16's (name, inplanes=64, num_classes=21).
+        import timm
+        self.backbone = timm.create_model('mobilevit_s', pretrained=False, num_classes=0)
+        self.num_features = self.backbone.num_features
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(self.num_features, self.num_classes)
+
+    def forward(self, x):
+        x = self.backbone.forward_features(x)
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+
+        return x
