@@ -1,0 +1,17 @@
+[INFO](2026/08/14/ 10:16:29 PM) 
+[WELCOME] Unfolding configurations...!
+[INFO](2026/08/14/ 10:16:29 PM) {'global_config': {'seed': 5959, 'device': 'cuda:0', 'is_mp': False}}
+[INFO](2026/08/14/ 10:16:29 PM) {'data_config': {'data_path': './data/', 'dataset_name': 'nwpu', 'num_shards': 200, 'iid': False, 'diri': True, 'alpha': 0.5}}
+[INFO](2026/08/14/ 10:16:29 PM) {'fed_config': {'C': 0.24, 'K': 42, 'R': 1000, 'E': 5, 'B': 10, 'criterion': 'torch.nn.CrossEntropyLoss', 'optimizer': 'torch.optim.SGD'}}
+[INFO](2026/08/14/ 10:16:29 PM) {'optim_config': {'lr': 0.05, 'momentum': 0.9}}
+[INFO](2026/08/14/ 10:16:29 PM) {'init_config': {'init_type': 'xavier', 'init_gain': 1.0, 'gpu_ids': [0]}}
+[INFO](2026/08/14/ 10:16:29 PM) {'model_config': {'name': 'ResNet18', 'inplanes': 64, 'num_classes': 45}}
+[INFO](2026/08/14/ 10:16:29 PM) {'log_config': {'log_path': './log/2026-08-14_22_16_26', 'log_name': 'FL.log', 'tb_port': 5255, 'tb_host': '0.0.0.0'}}
+[INFO](2026/08/14/ 10:16:29 PM) {'cl_config': {'cl_dim': 2048, 'cl_gamma': 0.05, 'cl_temp': 0.05, 'cl_K': 50}}
+[INFO](2026/08/14/ 10:16:29 PM) [Round: 0000] ...successfully initialized model (# parameters: 12763349)!
+[INFO](2026/08/14/ 10:16:30 PM) [Round: 0000] ...successfully created all 42 clients!
+[INFO](2026/08/14/ 10:16:30 PM) [Round: 0000] ...successfully finished setup of all 42 clients!
+[INFO](2026/08/14/ 10:16:31 PM) [Round: 0000] ...successfully transmitted models to all 42 clients!
+[INFO](2026/08/14/ 10:16:31 PM) [Round: 0001] Select clients...!
+[INFO](2026/08/14/ 10:16:31 PM) [Round: 0001] ...successfully transmitted models to 10 selected clients!
+[INFO](2026/08/14/ 10:16:31 PM) [Round: 0001] Start updating selected 10 clients...!
